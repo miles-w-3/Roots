@@ -12,18 +12,21 @@ struct IntervalPickerView: View {
     
     // allow selection of up to 6 days, can roll over to weeks
     private let days = 0
-
-    static let day_range = [0...365]
+    private let day_range = 1...365
+    
     init(editData: Binding<Contact.EditData>) {
         self._data = editData
     }
     
     var body: some View {
         Form {
-            Picker("Interval", selection: $data.co) {
-                ForEach(IntervalPickerView.day_range) { day in
-                    Text(day)
+            Picker("Choose interval", selection: $data.contactInterval) {
+                ForEach(self.day_range, id: \.self) {
+                    Text(String($0))
                 }
+            }
+            DatePicker(selection: $data.reminderTime, in: ...Date(), displayedComponents: .hourAndMinute) {
+                Text("Select reminder time")
             }
         }
         
@@ -50,8 +53,8 @@ struct IntervalPickerView: View {
                 .frame(width: geometry.size.width/2, height: geometry.size.height, alignment: .center)
                 .compositingGroup()
                 .clipped()
-            }*/
-        }
+            }
+        }*/
     }
 }
 

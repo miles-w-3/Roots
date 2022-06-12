@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Contact : Identifiable {
     // unique id for each contact
@@ -17,24 +18,21 @@ struct Contact : Identifiable {
     var nextDate: Date
     // contact interval in days, used to set the new date from the current reminder time
     var contactInterval: Int
-    // TODO: Time since contact will be a float, fractions less than one represent hours left
-    var timeSinceContact: Double
     var theme: Theme
     var birthday: Date?
     
     
     init(name: String,
-         contactTime: Date, // Today's datem set at the time the user wants to be reminded TODO: day will be set be constructor to today + given interval
+         remindTime: Date, // Today's datem set at the time the user wants to be reminded TODO: day will be set be constructor to today + given interval
          contactInterval: Int,
-         timeSinceContact: Double = 0,
          theme: Theme,
          birthday: Date? = nil) {
-        self.prevDate = contactTime
+        self.prevDate = remindTime
         self.contactInterval = contactInterval
-        self.setNextDate()
         self.name = name
         self.birthday = birthday
         self.theme = theme
+        self.setNextDate()
     }
     
     
@@ -50,8 +48,50 @@ struct Contact : Identifiable {
     }
 
     //
-    var remainingContactTime: Int {
-         contactInterval - timeSinceContact
+    var reminderTimeLabel: some View {
+        // show message in red for due reminder
+        if (self.due) {
+            return AnyView(Label("\(reminderTime) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon))
+        }
+        // show blue message for valid remimder
+        return AnyView(Label("\(reminderTime) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon))
+    }
+    
+    // format string of the time of the reminder in days, or hours if less than a day left
+    private var reminderTime: String {
+        let rightNow = Date()
+        // get hour diff
+        let hourDiff: Int = Calendar.current.dateComponents([.hour], from: rightNow, to: self.nextDate).hour ?? 0
+        let hourAbs = abs(hourDiff)
+        // return a reminder time in hours
+        if (hourAbs < 24) {
+            // if time is still before reminder
+            if (hourDiff > 0) {
+                return "\(hourDiff) hours remaining"
+            }
+            // time is after reminder
+            if (hourDiff < 0) {
+                return "\(hourAbs) hours overdue"
+            }
+            // hourDiff is 0 TODO: Better message here, and do we want to go more in-depth to minutes?
+            else {
+                return "Time to contact!"
+            }
+        }
+        // if the hour diff is geq a day, then we want unit in days instead
+        else {
+            let dayDiff: Int = Calendar.current.dateComponents([.day], from: rightNow, to: self.nextDate).day ?? 0
+            let dayAbs = abs(dayDiff)
+            // still time before the reminder
+            if (dayDiff > 0) {
+                return "\(dayDiff) days remaining"
+            }
+            // reminder is overdue
+            else {
+                return "\(dayAbs) days overdue"
+            }
+            // note that equals case is handled in the hour
+        }
     }
     
     // True if the current time is greater than or equal to the next date
@@ -68,11 +108,11 @@ struct Contact : Identifiable {
     }
     
     // person was contacted, reset their time since contact TODO: Either do an in-time flag or check the current date against nextDate
-    mutating func markContacted() {
-        timeSinceContact = 0
-    }
+//    mutating func markContacted() {
+//        timeSinceContact = 0
+//    }
     
-    // TODO: Als
+    // TODO: Also modify the interval with the current date
     mutating func changeInterval(newInterval: Int, newTime: Date) {
         self.contactInterval = newInterval
     }
@@ -95,41 +135,25 @@ extension Contact {
         // name of the contact
         var name: String? = nil
         var contactInterval: Int? = nil
+        var reminderTime: Date
         var theme: Theme? = nil
         var birthday: Date? = nil
     }
     
     // Apply all non-nil values to the Contact
     mutating func apply(newData: EditData) {
-        // Track if contact interval has been mutated so that it deosn't get overridded during multiple conversions
-        var mutatedInterval = false
-        
-        
         if let unwrappedName = newData.name {
             self.name = unwrappedName
         }
         
-        if let unwrappedInterval = newData.contactInterval {
-            self.contactInterval = unwrappedInterval
+        if let unwrappedContactInterval = newData.contactInterval {
+            self.contactInterval = unwrappedContactInterval
         }
         
-        // set contact interval based on hours and weeks
-        if let unwrappedIntervalD = newData.contactIntervalD {
-            self.contactInterval = unwrappedIntervalD
-            mutatedInterval = true // set true so that weeks can add on
-        }
-        // set contact interval based on hours and weeks
-        if let unwrappedIntervalW = newData.contactIntervalW {
-            // if hours were not overidden, then just override here
-            if (!mutatedInterval) {
-                self.contactInterval = unwrappedIntervalW
-            }
-            // otherwise, add to the already-overidded value
-            else {
-                // multiply week interval by the number of days in a week to convert, then add to interval
-                self.contactInterval += (unwrappedIntervalW * 7)
-            }
-        }
+    
+        self.prevDate = newData.reminderTime
+        self.setNextDate();
+        
         if let unwrappedTheme = newData.theme {
             self.theme = unwrappedTheme
         }
@@ -143,10 +167,10 @@ extension Contact {
 extension Contact {
     static let SampleContacts: [Contact] =
     [
-        Contact(name: "John Doe", contactInterval: 24, timeSinceContact: 4, theme: .orange),
-        Contact(name: "Chris Cringle", contactInterval: 36, timeSinceContact: 0, theme: .bubblegum),
-        Contact(name: "Eilliam Wella", contactInterval: 4, timeSinceContact: 6, theme: .indigo),
-        Contact(name: "Shris Carp", contactInterval: 8, timeSinceContact: 6, theme: .seafoam, birthday: Date(timeIntervalSinceReferenceDate: 0))
+        Contact(name: "John Doe", remindTime: Date(), contactInterval: 24,  theme: .orange),
+        Contact(name: "Chris Cringle", remindTime: Date(), contactInterval: 7, theme: .bubblegum),
+        Contact(name: "Eilliam Wella", remindTime: Date(), contactInterval: 4, theme: .indigo),
+        Contact(name: "Shris Carp", remindTime: Date(), contactInterval: 8, theme: .seafoam, birthday: Date(timeIntervalSinceReferenceDate: 0))
     ]
     
 }

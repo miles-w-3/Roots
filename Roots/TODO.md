@@ -49,6 +49,7 @@ Should the next interval be 5 days away or four? i.e. is the interval regular or
 
 ### Birthday reminders
 User inputs a birthday for a contact - do they automatically want a reminder then? for now I'm thinking yes
+There could be a whole list of custom specifications to remind
 
 
 

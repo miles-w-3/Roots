@@ -20,18 +20,7 @@ struct ContactCardView: View {
                     .font(.headline)
                     .padding(4)
                 Spacer()
-                // Contact time was just set or reset
-                if (contact.timeSinceContact == 0) {
-                    Label("\(contact.remainingContactTime) Hours left", systemImage: "clock.badge.checkmark.fill").font(.footnote).foregroundColor(.green).padding(4).labelStyle(.trailingIcon)
-                }
-                // Show standard time remaining
-                else if (!contact.overdue) {
-                    Label("\(contact.remainingContactTime) Hours left", systemImage: "clock.fill").font(.footnote).foregroundColor(.blue).padding(4).labelStyle(.trailingIcon)
-                }
-                // Contact time exceeds the interval, show overdue hours
-                else {
-                    Label("\(-contact.remainingContactTime) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon)
-                }
+                contact.reminderTimeLabel
                 
             }
             // Contact timeline bar
