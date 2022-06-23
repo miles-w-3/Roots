@@ -46,6 +46,7 @@ Should the next interval be 5 days away or four? i.e. is the interval regular or
     - but if the new interval is bigger, keep the current progress
     - if the interval is smaller, then reset it? IDK this might be too convoluted
 
+Note that on the dot, there will be a prompt to directly set the interval - i guess this is the only time you don't create a new date
 
 ### Birthday reminders
 User inputs a birthday for a contact - do they automatically want a reminder then? for now I'm thinking yes

@@ -38,24 +38,24 @@ struct ContactInfoView: View {
                 .buttonStyle(BorderlessButtonStyle())
                 .background(contact.theme.mainColor)
                 .cornerRadius(15)
-                .disabled(contact.timeSinceContact == 0)
             }
             
             // List for new information
             List {
+                let txt = contact.reminderTime
                 // display personal details including birthday, contact interval, and duration
                 Section(header: Text("Details")) {
                     // show remaining time left for contact
                     HStack {
-                        if (contact.overdue) {
+                        if (contact.due) {
                             Label("Time overdue", systemImage: "hourglass.tophalf.filled")
                             Spacer()
-                            Text("\(-contact.remainingContactTime) hours")
+                            Text(txt)
                         }
                         else {
                             Label("Time remaining", systemImage: "hourglass")
                             Spacer()
-                            Text("\(contact.remainingContactTime) hours")
+                            Text(txt)
                         }
                     }
                     // Show birthday if the contact's is in the system

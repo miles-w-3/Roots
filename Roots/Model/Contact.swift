@@ -32,6 +32,8 @@ struct Contact : Identifiable {
         self.name = name
         self.birthday = birthday
         self.theme = theme
+        // set default next date so that function can be called
+        self.nextDate = prevDate
         self.setNextDate()
     }
     
@@ -47,7 +49,7 @@ struct Contact : Identifiable {
         return completedTime / totalTime
     }
 
-    //
+    // return a label containing the reminder time
     var reminderTimeLabel: some View {
         // show message in red for due reminder
         if (self.due) {
@@ -58,7 +60,7 @@ struct Contact : Identifiable {
     }
     
     // format string of the time of the reminder in days, or hours if less than a day left
-    private var reminderTime: String {
+    var reminderTime: String {
         let rightNow = Date()
         // get hour diff
         let hourDiff: Int = Calendar.current.dateComponents([.hour], from: rightNow, to: self.nextDate).hour ?? 0
@@ -100,23 +102,35 @@ struct Contact : Identifiable {
         return now >= self.nextDate
     }
     
-    // Increment the old date to the nextDate, increment nextDate by interval
-    mutating func incrementReminderDate() {
-        // increment the old
-        self.prevDate = self.nextDate
-        setNextDate()
-    }
+    
+    
     
     // person was contacted, reset their time since contact TODO: Either do an in-time flag or check the current date against nextDate
-//    mutating func markContacted() {
-//        timeSinceContact = 0
-//    }
+    mutating func markContacted() {
+        incrementReminderDate(newDate: true)
+    }
     
     // TODO: Also modify the interval with the current date
     mutating func changeInterval(newInterval: Int, newTime: Date) {
         self.contactInterval = newInterval
     }
     
+    
+    // TODO: Verify that this logic actually works, it might have to be more complicated
+    // Increment the old date to the nextDate, increment nextDate by interval
+    private mutating func incrementReminderDate(newDate: Bool = false) {
+        // if we are incrementing the date based on a different time than the standard reminder - either contacted early or late
+        if newDate {
+            // move prevDate to today, but keep its time
+            self.prevDate = todayAtTime(correctTime: self.prevDate)
+        }
+        else {
+            // increment the old date if it is a standard movement
+            self.prevDate = self.nextDate
+        }
+        
+        setNextDate()
+    }
     
     // set the next date based on the current date and the interval
     private mutating func setNextDate() {
@@ -126,6 +140,20 @@ struct Contact : Identifiable {
             self.nextDate = Calendar.current.date(byAdding: dateComp, to: undrappedDate)!
         }
     }
+    
+    // refresh a date to be the current date at the time (hours, minutes seconds) of the given date
+    private func todayAtTime(correctTime: Date) -> Date {
+        let rightNow = Date()
+        // get the time from the given date
+        let timeComponent = Calendar.current.dateComponents([.hour, .minute, .second], from: rightNow)
+        // get the hours, minutes, and seconds of prevDate so so we can set the proper reminder time on the given date
+        let hour = timeComponent.hour ?? 0
+        let minute = timeComponent.minute ?? 0
+        let second = timeComponent.second ?? 0
+
+        // now return a date representing the current day, set to the proper time
+        return Calendar.current.date(bySettingHour: hour, minute: minute, second: second, of: rightNow)!
+    }
 }
 
 
@@ -133,33 +161,41 @@ struct Contact : Identifiable {
 extension Contact {
     struct EditData {
         // name of the contact
-        var name: String? = nil
-        var contactInterval: Int? = nil
-        var reminderTime: Date
-        var theme: Theme? = nil
+        var name: String
+        var contactInterval: Int
+        var remindTime: Date
+        var theme: Theme
         var birthday: Date? = nil
+        
+        // Pass in the current data of the struct
+        init(baseContact: Contact) {
+            self.name = baseContact.name
+            self.contactInterval = baseContact.contactInterval
+            self.remindTime = baseContact.prevDate // doesn't matter to pass in prevDate or nextDate, just need the time
+            self.theme = baseContact.theme
+            if let unwrappedBDay = baseContact.birthday {
+                self.birthday = unwrappedBDay
+            }
+        }
     }
     
     // Apply all non-nil values to the Contact
     mutating func apply(newData: EditData) {
-        if let unwrappedName = newData.name {
-            self.name = unwrappedName
-        }
+        self.name = newData.name
         
-        if let unwrappedContactInterval = newData.contactInterval {
-            self.contactInterval = unwrappedContactInterval
-        }
+        self.contactInterval = newData.contactInterval
         
-    
-        self.prevDate = newData.reminderTime
+        // set a new date with the given remind time
+        self.prevDate = todayAtTime(correctTime: newData.remindTime)
         self.setNextDate();
         
-        if let unwrappedTheme = newData.theme {
-            self.theme = unwrappedTheme
-        }
+        self.theme = newData.theme
+        
         if let unwrappedBday = newData.birthday {
             self.birthday = unwrappedBday
         }
+        
+        self.setNextDate()
     }
 }
 

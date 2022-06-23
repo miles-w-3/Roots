@@ -23,6 +23,7 @@ struct ContactInfoEditView: View {
 
 struct ContactInfoEditView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactInfoEditView(editData: .constant(Contact.EditData()))
+        let testEditData = Contact.EditData(baseContact: Contact.SampleContacts[0])
+        ContactInfoEditView(editData: Contact.EditData(baseContact: .constant(Contact.SimpleContacts[0]))).previewInterfaceOrientation(.portrait)
     }
 }
