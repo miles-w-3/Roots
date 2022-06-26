@@ -23,6 +23,8 @@
 		933F325D2776202F00E1ABFC /* ContactInfoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933F325C2776202F00E1ABFC /* ContactInfoEditView.swift */; };
 		933F325F27764D9200E1ABFC /* ContactInfoProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933F325E27764D9200E1ABFC /* ContactInfoProgressView.swift */; };
 		933F326127764DF000E1ABFC /* ContactProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933F326027764DF000E1ABFC /* ContactProgressViewStyle.swift */; };
+		93814D402868BCE8009B2C08 /* ThemeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93814D3F2868BCE8009B2C08 /* ThemeView.swift */; };
+		93814D422868BD82009B2C08 /* ThemePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93814D412868BD82009B2C08 /* ThemePicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		933F325C2776202F00E1ABFC /* ContactInfoEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactInfoEditView.swift; sourceTree = "<group>"; };
 		933F325E27764D9200E1ABFC /* ContactInfoProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactInfoProgressView.swift; sourceTree = "<group>"; };
 		933F326027764DF000E1ABFC /* ContactProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProgressViewStyle.swift; sourceTree = "<group>"; };
+		93814D3F2868BCE8009B2C08 /* ThemeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeView.swift; sourceTree = "<group>"; };
+		93814D412868BD82009B2C08 /* ThemePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +177,8 @@
 		933F32502773CDD900E1ABFC /* Themes */ = {
 			isa = PBXGroup;
 			children = (
+				93814D3F2868BCE8009B2C08 /* ThemeView.swift */,
+				93814D412868BD82009B2C08 /* ThemePicker.swift */,
 			);
 			path = Themes;
 			sourceTree = "<group>";
@@ -320,6 +326,7 @@
 			files = (
 				933F326127764DF000E1ABFC /* ContactProgressViewStyle.swift in Sources */,
 				932143822776D8990095E880 /* IntervalPickerView.swift in Sources */,
+				93814D402868BCE8009B2C08 /* ThemeView.swift in Sources */,
 				933F32522773D1B600E1ABFC /* ContactCardView.swift in Sources */,
 				933F325827742C2700E1ABFC /* TrailingIconLabel.swift in Sources */,
 				933F324C2773C90A00E1ABFC /* Contact.swift in Sources */,
@@ -327,6 +334,7 @@
 				933F324F2773CDD000E1ABFC /* Theme.swift in Sources */,
 				933F3209276FEF9B00E1ABFC /* ContactsView.swift in Sources */,
 				933F325D2776202F00E1ABFC /* ContactInfoEditView.swift in Sources */,
+				93814D422868BD82009B2C08 /* ThemePicker.swift in Sources */,
 				933F3207276FEF9B00E1ABFC /* RootsApp.swift in Sources */,
 				933F32562773E67500E1ABFC /* ContactInfoView.swift in Sources */,
 			);

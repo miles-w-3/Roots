@@ -20,14 +20,35 @@ struct ContactInfoEditView: View {
     
     var body: some View {
         Form {
-            Picker("Choose interval", selection: $data.contactInterval) {
-                ForEach(self.day_range, id: \.self) {
-                    Text(String($0))
+            Section(header: Text("Settings") ) {
+                TextField("Name", text: $data.name)
+                ThemePicker(selected: $data.theme)
+                Picker("Choose interval", selection: $data.contactInterval) {
+                    ForEach(self.day_range, id: \.self) {
+                        Text(String($0))
+                    }
+                }
+                DatePicker(selection: $data.remindTime, in: ...Date(), displayedComponents: .hourAndMinute) {
+                    Text("Select reminder time")
                 }
             }
-            DatePicker(selection: $data.remindTime, in: ...Date(), displayedComponents: .hourAndMinute) {
-                Text("Select reminder time")
+            // TODO: Use separate boolean for birthday
+            Section(header: Text("Info") ) {
+                // TODO: Check box to enabled birthday
+                if let bday = $data.birthday {
+                    HStack {
+                        Text("Birthday")
+                        if @Binding var bday = $data.birthday {
+                            DatePicker(selection: $bday, in ...bday, displayedComponents: .date)
+                        }
+                    }
+                }
+                
+                
+                Text("Phone Number")
             }
+            
+            
         }
     }
 }
