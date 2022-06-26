@@ -23,7 +23,7 @@ struct Contact : Identifiable {
     
     
     init(name: String,
-         remindTime: Date, // Today's datem set at the time the user wants to be reminded TODO: day will be set be constructor to today + given interval
+         remindTime: Date, // Today's date set at the time the user wants to be reminded
          contactInterval: Int,
          theme: Theme,
          birthday: Date? = nil) {
@@ -53,14 +53,14 @@ struct Contact : Identifiable {
     var reminderTimeLabel: some View {
         // show message in red for due reminder
         if (self.due) {
-            return AnyView(Label("\(reminderTime) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon))
+            return AnyView(Label("\(timeTilContact) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon))
         }
         // show blue message for valid remimder
-        return AnyView(Label("\(reminderTime) Hours overdue", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.red).padding(4).labelStyle(.trailingIcon))
+        return AnyView(Label("\(timeTilContact)", systemImage: "clock.badge.exclamationmark.fill").font(.footnote).foregroundColor(.blue).padding(4).labelStyle(.trailingIcon))
     }
     
     // format string of the time of the reminder in days, or hours if less than a day left
-    var reminderTime: String {
+    var timeTilContact: String {
         let rightNow = Date()
         // get hour diff
         let hourDiff: Int = Calendar.current.dateComponents([.hour], from: rightNow, to: self.nextDate).hour ?? 0
@@ -96,14 +96,18 @@ struct Contact : Identifiable {
         }
     }
     
+    // True if the start time is within an hour of the current time
+    var started: Bool {
+        let now = Date()
+        let diff = Calendar.current.dateComponents([.hour], from: self.prevDate, to: now).hour ?? 0
+        return diff <= 1
+    }
+    
     // True if the current time is greater than or equal to the next date
     var due: Bool {
         let now = Date()
         return now >= self.nextDate
     }
-    
-    
-    
     
     // person was contacted, reset their time since contact TODO: Either do an in-time flag or check the current date against nextDate
     mutating func markContacted() {
@@ -161,22 +165,15 @@ struct Contact : Identifiable {
 extension Contact {
     struct EditData {
         // name of the contact
-        var name: String
-        var contactInterval: Int
-        var remindTime: Date
-        var theme: Theme
+        var name: String = ""
+        var contactInterval: Int = 7
+        var remindTime: Date = Date()
+        var theme: Theme = .indigo
         var birthday: Date? = nil
-        
-        // Pass in the current data of the struct
-        init(baseContact: Contact) {
-            self.name = baseContact.name
-            self.contactInterval = baseContact.contactInterval
-            self.remindTime = baseContact.prevDate // doesn't matter to pass in prevDate or nextDate, just need the time
-            self.theme = baseContact.theme
-            if let unwrappedBDay = baseContact.birthday {
-                self.birthday = unwrappedBDay
-            }
-        }
+    }
+    
+    var editData: EditData {
+        EditData(name: name, contactInterval: contactInterval, remindTime: prevDate, theme: theme, birthday: birthday)
     }
     
     // Apply all non-nil values to the Contact
@@ -203,7 +200,7 @@ extension Contact {
 extension Contact {
     static let SampleContacts: [Contact] =
     [
-        Contact(name: "John Doe", remindTime: Date(), contactInterval: 24,  theme: .orange),
+        Contact(name: "John Doe", remindTime: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, contactInterval: 24,  theme: .orange),
         Contact(name: "Chris Cringle", remindTime: Date(), contactInterval: 7, theme: .bubblegum),
         Contact(name: "Eilliam Wella", remindTime: Date(), contactInterval: 4, theme: .indigo),
         Contact(name: "Shris Carp", remindTime: Date(), contactInterval: 8, theme: .seafoam, birthday: Date(timeIntervalSinceReferenceDate: 0))

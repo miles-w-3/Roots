@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContactsView: View {
     @Binding var contacts: [Contact]
+    @State var showingAddView: Bool = false 
     
     var body: some View {
         List {
@@ -17,7 +18,14 @@ struct ContactsView: View {
                     ContactCardView(contact: contact)
                 }
             }
-        }.navigationTitle("Connections")            
+        }
+        .navigationTitle("Connections")
+        .toolbar {
+            Button(action: {}) {
+                Image(systemName: "plus")
+            }
+            .accessibilityLabel("New Scrum")
+        }
     }
 }
 

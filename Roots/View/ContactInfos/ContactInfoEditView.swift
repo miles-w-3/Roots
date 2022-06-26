@@ -9,21 +9,31 @@ import SwiftUI
 
 struct ContactInfoEditView: View {
     // An edit data passed by the ContactInfoView
-    @Binding var editData: Contact.EditData
+    @Binding var data: Contact.EditData
+    
+    private var days = 0
+    private let day_range = 1...365
+    
+    init(data: Binding<Contact.EditData>) {
+        self._data = data
+    }
     
     var body: some View {
-        List {
-            Section(header: Text("Edit interval")) {
-                
+        Form {
+            Picker("Choose interval", selection: $data.contactInterval) {
+                ForEach(self.day_range, id: \.self) {
+                    Text(String($0))
+                }
             }
-            
+            DatePicker(selection: $data.remindTime, in: ...Date(), displayedComponents: .hourAndMinute) {
+                Text("Select reminder time")
+            }
         }
     }
 }
 
 struct ContactInfoEditView_Previews: PreviewProvider {
     static var previews: some View {
-        let testEditData = Contact.EditData(baseContact: Contact.SampleContacts[0])
-        ContactInfoEditView(editData: Contact.EditData(baseContact: .constant(Contact.SimpleContacts[0]))).previewInterfaceOrientation(.portrait)
+        ContactInfoEditView(data: .constant(Contact.SampleContacts[0].editData)).previewInterfaceOrientation(.portrait)
     }
 }

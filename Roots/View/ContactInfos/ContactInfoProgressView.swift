@@ -7,29 +7,23 @@
 
 import SwiftUI
 
-// TODO: Progress bar with
 struct ContactInfoProgressView: View {
     @Binding var contact: Contact
     
     var body: some View {
         VStack {
+            contact.reminderTimeLabel
             ProgressView(value: contact.contactProgress)
                 .progressViewStyle(ContactProgressViewStyle(theme: contact.theme))
             HStack {
-                VStack(alignment: .leading) {
-                    Text("Hours since contact")
-                        .font(.callout)
-                    Label("\(contact.timeSinceContact)", systemImage: "deskclock")
-                }
                 Spacer()
-                VStack(alignment: .trailing) {
-                    Text("Hour interval")
+                VStack(alignment: .center) {
+                    Text("Day interval")
                         .font(.callout)
                     Label("\(contact.contactInterval)", systemImage: "clock.arrow.2.circlepath")
                 }
             }
         }
-        .padding([.top, .horizontal])
     }
 }
 

@@ -20,12 +20,13 @@ struct IntervalPickerView: View {
     
     var body: some View {
         Form {
+            
             Picker("Choose interval", selection: $data.contactInterval) {
                 ForEach(self.day_range, id: \.self) {
                     Text(String($0))
                 }
             }
-            DatePicker(selection: $data.reminderTime, in: ...Date(), displayedComponents: .hourAndMinute) {
+            DatePicker(selection: $data.remindTime, in: ...Date(), displayedComponents: .hourAndMinute) {
                 Text("Select reminder time")
             }
         }
@@ -60,6 +61,6 @@ struct IntervalPickerView: View {
 
 struct IntervalPickerView_Previews: PreviewProvider {
     static var previews: some View {
-        IntervalPickerView(editData: .constant(Contact.EditData()))
+        IntervalPickerView(editData: .constant(Contact.SampleContacts[0].editData))
     }
 }
